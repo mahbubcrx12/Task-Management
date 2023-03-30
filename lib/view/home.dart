@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:task_management/service/notification_services.dart';
 import 'package:task_management/service/theme_services.dart';
 import 'package:get/get.dart';
-
+import 'package:intl/intl.dart';
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
 
@@ -28,11 +28,9 @@ class _HomePageState extends State<HomePage> {
           appBar: _appBar(
 
           ),
-          body: Column(children: [
-            Text("theme",style: TextStyle(
-              fontSize: 30,
-              fontWeight: FontWeight.bold
-            ),)
+          body: Column(
+            children: [
+                Text(DateFormat.yMMMd().format(DateTime.now()))
           ],),
         )
     );
@@ -40,6 +38,8 @@ class _HomePageState extends State<HomePage> {
 
   _appBar(){
     return AppBar(
+      elevation: 0,
+      backgroundColor: context.theme.dialogBackgroundColor,
       leading: GestureDetector(
         onTap: (){
             ThemeService().switchTheme();
@@ -49,12 +49,21 @@ class _HomePageState extends State<HomePage> {
             );
             notifyHelper.scheduledNotification();
         },
-        child: Icon(Icons.nightlight_round,
-        size: 20,),
+        child: Icon(Get.isDarkMode ? Icons.wb_sunny_outlined:Icons.nightlight_outlined,
+        size: 20,
+        color: Get.isDarkMode ? Colors.white : Colors.black,
+        ),
       ),
       actions: [
-        Icon(Icons.person,
-          size: 20,),
+        CircleAvatar(
+          backgroundColor: Colors.white,
+          radius: 16,
+          backgroundImage: AssetImage("assets/personicon.png"),
+          // child: Padding(
+          //   padding: const EdgeInsets.all(0.0),
+          //   child: Image.asset('assets/personicon.png'),
+          // ),
+        ),
         SizedBox(width:20 ,)
       ],
     );
