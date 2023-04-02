@@ -3,6 +3,8 @@ import 'package:task_management/service/notification_services.dart';
 import 'package:task_management/service/theme_services.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:task_management/view/theme.dart';
+import 'package:task_management/view/widgets/MyButton.dart';
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
 
@@ -29,9 +31,34 @@ class _HomePageState extends State<HomePage> {
 
           ),
           body: Column(
-            children: [
-                Text(DateFormat.yMMMd().format(DateTime.now()))
-          ],),
+           children: [
+
+             Container(
+               margin: const EdgeInsets.only(left: 20,right: 20,top: 10),
+               child: Row(
+                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                 children: [
+                   Container(
+                     //margin: EdgeInsets.symmetric(horizontal: 20),
+                     child: Column(
+                       crossAxisAlignment: CrossAxisAlignment.start,
+                       children: [
+                         Text(DateFormat.yMMMd().format(DateTime.now()),
+                         style: subHeadingStyle),
+                         Text("Today",
+                         style: headingStyle,)
+                       ],
+                     ),
+                   ),
+                   Padding(
+                     padding: const EdgeInsets.only(right: 0),
+                     child: MyButton(onTap: (){}, label: "+ Add Task"),
+                   )
+                 ],
+               ),
+             )
+           ],
+           ),
         )
     );
   }
