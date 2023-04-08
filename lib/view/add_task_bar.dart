@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
+import 'package:task_management/view/theme.dart';
 import 'package:task_management/view/widgets/text_input_field.dart';
 
 class AddTaskPage extends StatefulWidget {
@@ -23,82 +25,206 @@ class _AddTaskPageState extends State<AddTaskPage> {
         color: Colors.white,
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8.0,vertical: 8),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text("Add Task",style: TextStyle(
-                  fontSize: 25,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black
-              ),),
-              SizedBox(height: 20,),
-              Text("Title",style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.black
-              ),),
-              SizedBox(height: 10,),
-              InputTextField(
-                  hintText: "Enter title here.",
-                  controller: titleController
-              ),
-              SizedBox(height: 15,),
-              Text("Note",style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.black
-              ),),
-              SizedBox(height: 10,),
-              InputTextField(
-                  hintText: "Enter note here.",
-                  controller: noteController
-              ),
-              SizedBox(height: 10,),
-              Text("Note",style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.black
-              ),),
-              SizedBox(height: 10,),
-              InputTextField(
-                  hintText: "Enter date here.",
-                  controller: dateController
-              ),
-              // Row(
-              //   children: [
-              //  Column(
-              //    children: [
-              //    Text("Start Time",style: TextStyle(
-              //        fontSize: 20,
-              //        fontWeight: FontWeight.w600,
-              //        color: Colors.black
-              //    ),),
-              //    SizedBox(height: 10,),
-              //    InputTextField(
-              //        hintText: "Enter date here.",
-              //        controller: timeController
-              //    ),
-              //  ],),
-              //
-              //   Column(
-              //     children: [
-              //       Text("End Time",style: TextStyle(
-              //           fontSize: 20,
-              //           fontWeight: FontWeight.w600,
-              //           color: Colors.black
-              //       ),),
-              //       SizedBox(height: 10,),
-              //       InputTextField(
-              //           hintText: "Enter date here.",
-              //           controller: timeController
-              //       ),
-              //     ],),
-              //
-              // ],)
-            ],
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text("Add Task",style: TextStyle(
+                    fontSize: 25,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black
+                ),),
+                SizedBox(height: 20,),
+                Text("Title",style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.black
+                ),),
+                SizedBox(height: 10,),
+                InputTextField(
+                    hintText: "Enter title here.",
+                    controller: titleController
+                ),
+                SizedBox(height: 15,),
+                Text("Note",style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.black
+                ),),
+                SizedBox(height: 10,),
+                InputTextField(
+                    hintText: "Enter note here.",
+                    controller: noteController
+                ),
+                SizedBox(height: 10,),
+
+                Text("Note",style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.black
+                ),),
+                SizedBox(height: 10,),
+                InputTextField(
+                    hintText: "Enter date here.",
+                    controller: dateController
+                ),
+               SizedBox(height: 20,),
+                //_timeState(),
+
+                SizedBox(height: 20,),
+                Text("Remind",style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.black
+                ),),
+                SizedBox(height: 10,),
+                Container(
+                  height: 50,
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                          color: Colors.black26,
+                          width: 2
+                      )
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(left: 12),
+                        child: Text(".... minutes early",style: TextStyle(color: Colors.black26,fontSize: 16),),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(right: 12),
+                        child: Icon(Icons.keyboard_arrow_down_sharp,size: 28,color: Colors.black26,),
+                      )
+                    ],
+                  ),
+                ),
+                SizedBox(height: 15,),
+                Text("Repeat",style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.black
+                ),),
+                SizedBox(height: 10,),
+                Container(
+                  height: 50,
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                          color: Colors.black26,
+                          width: 2
+                      )
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(left: 12),
+                        child: Text("None",style: TextStyle(color: Colors.black26,fontSize: 16),),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(right: 12),
+                        child: Icon(Icons.keyboard_arrow_down_sharp,size: 28,color: Colors.black26,),
+                      )
+                    ],
+                  ),
+                ),
+                SizedBox(height: 15,),
+                Expanded(child: _timeState()),
+
+              ],
+            ),
           ),
         ),
       ),
+    );
+  }
+
+  _timeState(){
+    return  Row(
+      children: [
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text("Start Time",style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.w600,
+                color: Colors.black
+            ),),
+            SizedBox(height: 10,),
+            Container(
+              height: 50,
+              width: double.infinity,
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                      color: Colors.black26,
+                      width: 2
+                  )
+              ),
+              child: Center(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    Text(DateFormat.jm().format(DateTime.now()),
+                        style: TextStyle(fontSize: 20,fontWeight: FontWeight.w600,color: Colors.black26)),
+
+                    Icon(Icons.watch_later_outlined,color: Colors.black26,)
+                  ],
+                ),
+              ),
+            )
+
+          ],
+        ),
+
+        Container(
+          width: MediaQuery.of(context).size.width * .4,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text("End Time",style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.black
+                  ),),
+                  SizedBox(height: 10,),
+                  Container(
+                    height: 50,
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(
+                            color: Colors.black26,
+                            width: 2
+                        )
+                    ),
+                    child: Center(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          Text(DateFormat.jm().format(DateTime.now()),
+                              style: TextStyle(fontSize: 20,fontWeight: FontWeight.w600,color: Colors.black26)),
+
+                          Icon(Icons.watch_later_outlined,color: Colors.black26,)
+                        ],
+                      ),
+                    ),
+                  )
+
+                ],
+              ),
+            ],
+          ),
+        )
+      ],
     );
   }
 
