@@ -42,3 +42,21 @@ TextStyle get headingStyle{
   );
 }
 
+TextStyle get  titleStyle{
+  return GoogleFonts.lato(
+    textStyle: TextStyle(
+      fontSize: 16,
+      fontWeight: FontWeight.w600,
+      color: Get.isDarkMode? Colors.white : Colors.black
+    )
+  );
+}
+TextStyle get  subtitleStyle{
+  return GoogleFonts.lato(
+      textStyle: TextStyle(
+          fontSize: 14,
+          fontWeight: FontWeight.w500,
+          color: Get.isDarkMode? Colors.grey[100] : Colors.grey[600]
+      )
+  );
+}

@@ -12,176 +12,113 @@ class AddTaskPage extends StatefulWidget {
 }
 
 class _AddTaskPageState extends State<AddTaskPage> {
-  TextEditingController titleController =TextEditingController();
+  TextEditingController titleController = TextEditingController();
   TextEditingController noteController = TextEditingController();
   TextEditingController dateController = TextEditingController();
   TextEditingController timeController = TextEditingController();
+
+  DateTime _selectedDate = DateTime.now();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-
-        appBar: _appBar(context),
+      backgroundColor: context.theme.scaffoldBackgroundColor,
+      appBar: _appBar(context),
       body: Container(
-        color: Colors.white,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8.0,vertical: 8),
-          child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text("Add Task",style: TextStyle(
-                    fontSize: 25,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black
-                ),),
-                SizedBox(height: 20,),
-                Text("Title",style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.black
-                ),),
-                SizedBox(height: 10,),
-                InputTextField(
-                    hintText: "Enter title here.",
-                    controller: titleController
-                ),
-                SizedBox(height: 15,),
-                Text("Note",style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.black
-                ),),
-                SizedBox(height: 10,),
-                InputTextField(
-                    hintText: "Enter note here.",
-                    controller: noteController
-                ),
-                SizedBox(height: 10,),
-
-                Text("Note",style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.black
-                ),),
-                SizedBox(height: 10,),
-                InputTextField(
-                    hintText: "Enter date here.",
-                    controller: dateController
-                ),
-               SizedBox(height: 20,),
-                //_timeState(),
-
-                SizedBox(height: 20,),
-                Text("Remind",style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.black
-                ),),
-                SizedBox(height: 10,),
-                Container(
-                  height: 50,
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(
-                          color: Colors.black26,
-                          width: 2
-                      )
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(left: 12),
-                        child: Text(".... minutes early",style: TextStyle(color: Colors.black26,fontSize: 16),),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(right: 12),
-                        child: Icon(Icons.keyboard_arrow_down_sharp,size: 28,color: Colors.black26,),
-                      )
-                    ],
-                  ),
-                ),
-                SizedBox(height: 15,),
-                Text("Repeat",style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.black
-                ),),
-                SizedBox(height: 10,),
-                Container(
-                  height: 50,
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(
-                          color: Colors.black26,
-                          width: 2
-                      )
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(left: 12),
-                        child: Text("None",style: TextStyle(color: Colors.black26,fontSize: 16),),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(right: 12),
-                        child: Icon(Icons.keyboard_arrow_down_sharp,size: 28,color: Colors.black26,),
-                      )
-                    ],
-                  ),
-                ),
-                SizedBox(height: 15,),
-                Expanded(child: _timeState()),
-
-              ],
-            ),
+        padding: const EdgeInsets.only(left: 20, right: 20),
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                "Add Task",
+                style: headingStyle,
+              ),
+              SizedBox(height: 20,),
+              InputTextField(hintText: "Enter title", title: "Title"),
+              SizedBox(
+                height: 10,
+              ),
+              InputTextField(hintText: "Enter note ", title: "Note"),
+              SizedBox(
+                height: 10,
+              ),
+              InputTextField(
+                title: "Date",
+                hintText: DateFormat.yMd().format(_selectedDate),
+                widget: IconButton(
+                    onPressed: () {
+                      _getDateFromUser();
+                    },
+                    icon: Icon(
+                      Icons.calendar_today_outlined,
+                      color: Colors.grey,
+                    )),
+              )
+            ],
           ),
         ),
       ),
     );
   }
 
-  _timeState(){
-    return  Row(
+  _getDateFromUser()async{
+    DateTime? _datePicker =await showDatePicker(
+        context: context,
+        initialDate: DateTime.now(),
+        firstDate: DateTime(2020),
+        lastDate: DateTime(2024)
+    );
+    if(_datePicker != null){
+      setState(() {
+        _selectedDate = _datePicker;
+      });
+    }else{
+      print("it's null or something is wrong");
+    }
+  }
+
+  _timeState() {
+    return Row(
       children: [
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text("Start Time",style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.w600,
-                color: Colors.black
-            ),),
-            SizedBox(height: 10,),
+            Text(
+              "Start Time",
+              style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.black),
+            ),
+            SizedBox(
+              height: 10,
+            ),
             Container(
               height: 50,
               width: double.infinity,
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(12),
-                  border: Border.all(
-                      color: Colors.black26,
-                      width: 2
-                  )
-              ),
+                  border: Border.all(color: Colors.black26, width: 2)),
               child: Center(
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
                     Text(DateFormat.jm().format(DateTime.now()),
-                        style: TextStyle(fontSize: 20,fontWeight: FontWeight.w600,color: Colors.black26)),
-
-                    Icon(Icons.watch_later_outlined,color: Colors.black26,)
+                        style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.black26)),
+                    Icon(
+                      Icons.watch_later_outlined,
+                      color: Colors.black26,
+                    )
                   ],
                 ),
               ),
             )
-
           ],
         ),
-
         Container(
           width: MediaQuery.of(context).size.width * .4,
           child: Row(
@@ -190,35 +127,39 @@ class _AddTaskPageState extends State<AddTaskPage> {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text("End Time",style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.black
-                  ),),
-                  SizedBox(height: 10,),
+                  Text(
+                    "End Time",
+                    style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.black),
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
                   Container(
                     height: 50,
                     width: double.infinity,
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(12),
-                        border: Border.all(
-                            color: Colors.black26,
-                            width: 2
-                        )
-                    ),
+                        border: Border.all(color: Colors.black26, width: 2)),
                     child: Center(
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
                           Text(DateFormat.jm().format(DateTime.now()),
-                              style: TextStyle(fontSize: 20,fontWeight: FontWeight.w600,color: Colors.black26)),
-
-                          Icon(Icons.watch_later_outlined,color: Colors.black26,)
+                              style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.black26)),
+                          Icon(
+                            Icons.watch_later_outlined,
+                            color: Colors.black26,
+                          )
                         ],
                       ),
                     ),
                   )
-
                 ],
               ),
             ],
@@ -233,10 +174,13 @@ class _AddTaskPageState extends State<AddTaskPage> {
       elevation: 0,
       backgroundColor: Colors.white,
       leading: InkWell(
-          onTap: (){
+          onTap: () {
             Get.back();
           },
-          child: Icon(Icons.arrow_back_ios,color: Colors.black,)),
+          child: Icon(
+            Icons.arrow_back_ios,
+            color: Colors.black,
+          )),
       actions: [
         CircleAvatar(
           backgroundColor: Colors.white,
@@ -249,5 +193,4 @@ class _AddTaskPageState extends State<AddTaskPage> {
       ],
     );
   }
-
 }
