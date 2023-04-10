@@ -8,14 +8,13 @@ class InputTextField extends StatelessWidget {
   final TextEditingController? controller;
   final Widget? widget;
 
-  const InputTextField(
-      {Key? key,
-      this.widget,
-        required this.title,
-      required this.hintText,
-      this.controller,
-      })
-      : super(key: key);
+  const InputTextField({
+    Key? key,
+    this.widget,
+    required this.title,
+    required this.hintText,
+    this.controller,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -37,30 +36,27 @@ class InputTextField extends StatelessWidget {
               children: [
                 Expanded(
                     child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: TextFormField(
-                        readOnly: widget == null ? false : true,
-                  autofocus: false,
-                  cursorColor:
+                  padding: const EdgeInsets.all(8.0),
+                  child: TextFormField(
+                    readOnly: widget == null ? false : true,
+                    autofocus: false,
+                    cursorColor:
                         Get.isDarkMode ? Colors.grey[100] : Colors.grey[700],
-                  controller: controller,
-                  style: subtitleStyle,
-                        decoration: InputDecoration(
-                          hintText: hintText,
-                          hintStyle: subtitleStyle,
-                          focusedBorder: UnderlineInputBorder(
-                            borderSide: BorderSide(
-                              color: Colors.white,
-                              width: 0.0
-                            ),
-                          ),
-                          enabledBorder: UnderlineInputBorder(
-                            borderSide: BorderSide(color: Colors.white),
-                          ),
-                        ),
-                ),
-                    )),
-                widget == null ? Container() : Container(child: widget,)
+                    controller: controller,
+                    style: subtitleStyle,
+                    decoration: InputDecoration(
+                      hintText: hintText,
+                      hintStyle: subtitleStyle,
+                      focusedBorder: InputBorder.none,
+                      enabledBorder: InputBorder.none
+                    ),
+                  ),
+                )),
+                widget == null
+                    ? Container()
+                    : Container(
+                        child: widget,
+                      )
               ],
             ),
           )
