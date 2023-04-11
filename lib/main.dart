@@ -5,8 +5,11 @@ import 'package:task_management/service/theme_services.dart';
 import 'package:task_management/view/home.dart';
 import 'package:task_management/view/theme.dart';
 
+import 'db/db_helper.dart';
+
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
+  await DBHelper.initDb();
   await GetStorage.init();
   runApp(const MyApp());
 }

@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:task_management/controller/task_controller.dart';
+import 'package:task_management/model/task_model.dart';
 import 'package:task_management/view/theme.dart';
+import 'package:task_management/view/widgets/MyButton.dart';
 import 'package:task_management/view/widgets/text_input_field.dart';
 
 class AddTaskPage extends StatefulWidget {
@@ -12,10 +15,9 @@ class AddTaskPage extends StatefulWidget {
 }
 
 class _AddTaskPageState extends State<AddTaskPage> {
-  TextEditingController titleController = TextEditingController();
-  TextEditingController noteController = TextEditingController();
-  TextEditingController dateController = TextEditingController();
-  TextEditingController timeController = TextEditingController();
+  final TaskController _taskController = Get.put(TaskController());
+  TextEditingController _titleController = TextEditingController();
+  TextEditingController _noteController = TextEditingController();
 
   DateTime _selectedDate = DateTime.now();
   String _startTime = DateFormat("hh:mm a").format(DateTime.now()).toString();
@@ -32,12 +34,14 @@ class _AddTaskPageState extends State<AddTaskPage> {
     'Weekly',
     'Monthly'
   ];
+  int _selectedColor = 0;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: context.theme.scaffoldBackgroundColor,
+     backgroundColor: darkHeaderClr,
       appBar: _appBar(context),
+
       body: Container(
         padding: const EdgeInsets.only(left: 20, right: 20),
         child: SingleChildScrollView(
@@ -51,13 +55,13 @@ class _AddTaskPageState extends State<AddTaskPage> {
               SizedBox(
                 height: 20,
               ),
-              InputTextField(hintText: "Enter title", title: "Title"),
+              InputTextField(hintText: "Enter title", title: "Title",controller: _titleController,),
               SizedBox(
-                height: 10,
+                height: 20,
               ),
-              InputTextField(hintText: "Enter note ", title: "Note"),
+              InputTextField(hintText: "Enter note ", title: "Note",controller: _noteController,),
               SizedBox(
-                height: 10,
+                height: 20,
               ),
               InputTextField(
                 title: "Date",
@@ -152,17 +156,84 @@ class _AddTaskPageState extends State<AddTaskPage> {
                 ),
               ),
               SizedBox(height: 20,),
-              Row(children: [
-                Column(children: [
-                  Text("Color",style: titleStyle,),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                _colorSelection(),
+                  MyButton(label: "Create Task",
+                    onTap: (){
+                      _validateFields();
+                  },),
 
-                ],)
-              ],)
+              ],),
+
             ],
           ),
         ),
       ),
     );
+  }
+
+  _validateFields(){
+    if(_titleController.text.isNotEmpty && _noteController.text.isNotEmpty){
+      //save data to database
+      _addTaskToDatabase();
+      Get.back();
+    }else if(_titleController.text.isEmpty || _noteController.text.isEmpty){
+      Get.snackbar("Required", "Fields must be filled !",
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.white60,
+        colorText: Colors.black,
+        icon: Icon(Icons.warning_amber_outlined)
+      );
+    }
+  }
+
+  _addTaskToDatabase()async{
+   int value = await  _taskController.addTask(
+        task:TaskModel(
+            title: _titleController.text,
+            note: _noteController.text,
+            date: DateFormat.yMd().format(_selectedDate),
+            startTime: _startTime,
+            endTime: _endTime,
+            remind: _selectedRemind,
+            repeat: _selectedRepeat,
+            color: _selectedColor,
+            isCompleted: 0
+        )
+    );
+   print("id issssssssssssssss :" "$value");
+  }
+
+  _colorSelection(){
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+
+        Text("Color",style: titleStyle,),
+        SizedBox(height: 10,),
+        Wrap(
+            children: List<Widget>.generate(3, (index) {
+              return GestureDetector(
+                onTap: (){
+                  setState(() {
+                    _selectedColor = index;
+                  });
+                },
+                child: Padding(
+                  padding: const EdgeInsets.only(right: 8),
+                  child: CircleAvatar(
+                    radius: 12,
+                    backgroundColor: index==0 ? primaryClr : index == 1 ? pinkClr :yellowClr,
+                    child: _selectedColor == index ? Icon(Icons.done,color: Colors.white,size: 16,) : Container(),
+                  ),
+                ),
+              );
+            })
+        )
+
+      ],);
   }
 
   _getDateFromUser() async {

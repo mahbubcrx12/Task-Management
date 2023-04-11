@@ -33,6 +33,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return SafeArea(
         child: Scaffold(
+          backgroundColor: darkHeaderClr,
       appBar: _appBar(),
       body: Column(
         children: [
@@ -57,14 +58,12 @@ class _HomePageState extends State<HomePage> {
                 ),
                 Padding(
                   padding: const EdgeInsets.only(right: 0),
-                  child: InkWell(
+                  child: MyButton(
+                       label: "+ Add Task",
                     onTap: (){
                       Get.to(AddTaskPage());
                     },
-                    child: MyButton(
-                         label: "+ Add Task",
 
-                    ),
                   ),
 
                 )
