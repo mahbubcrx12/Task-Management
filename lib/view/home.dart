@@ -1,6 +1,7 @@
 import 'package:date_picker_timeline/date_picker_timeline.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:task_management/controller/task_controller.dart';
 import 'package:task_management/service/notification_services.dart';
 import 'package:task_management/service/theme_services.dart';
 import 'package:get/get.dart';
@@ -19,6 +20,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   DateTime _selectedDate = DateTime.now();
   var notifyHelper;
+  final _taskController = Get.put(TaskController());
 
   @override
   void initState() {
@@ -27,55 +29,85 @@ class _HomePageState extends State<HomePage> {
     notifyHelper = NotifyHelper();
     notifyHelper.initializeNotification();
     notifyHelper.requestIOSPermissions();
+    _taskController.getTasks();
   }
 
   @override
   Widget build(BuildContext context) {
     return SafeArea(
         child: Scaffold(
-          backgroundColor: darkHeaderClr,
+          backgroundColor: Get.isDarkMode?darkHeaderClr:white,
       appBar: _appBar(),
       body: Column(
         children: [
-          Container(
-            margin: const EdgeInsets.only(left: 20, right: 20, top: 10),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Container(
-                  //margin: EdgeInsets.symmetric(horizontal: 20),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(DateFormat.yMMMd().format(DateTime.now()),
-                          style: subHeadingStyle),
-                      Text(
-                        "Today",
-                        style: headingStyle,
-                      )
-                    ],
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(right: 0),
-                  child: MyButton(
-                       label: "+ Add Task",
-                    onTap: (){
-                      Get.to(AddTaskPage());
-                    },
-
-                  ),
-
-                )
-              ],
-            ),
-          ),
+          _titleBar(),
           _addDateBar(),
+          _showTask(),
         ],
       ),
     ));
   }
 
+  _showTask(){
+
+    return Expanded(
+
+        child: Obx(() {
+          return ListView.builder(
+
+            shrinkWrap: true,
+            itemCount: _taskController.taskList.length,
+              itemBuilder: (_,context){
+
+            return Container(
+              margin: EdgeInsets.only(bottom: 10),
+              width: 100,
+              height: 50,
+              color: Colors.red,
+            );
+          });
+        })
+    );
+
+  }
+
+  _titleBar(){
+    return Container(
+      margin: const EdgeInsets.only(left: 20, right: 20, top: 10),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Container(
+            //margin: EdgeInsets.symmetric(horizontal: 20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(DateFormat.yMMMd().format(DateTime.now()),
+                    style: subHeadingStyle),
+                Text(
+                  "Today",
+                  style: headingStyle,
+                )
+              ],
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(right: 0),
+            child: MyButton(
+              label: "+ Add Task",
+              onTap: (){
+                Get.to(()=>AddTaskPage());
+
+              },
+
+            ),
+
+          )
+        ],
+      ),
+    );
+  }
+  
   _addDateBar() {
     return Container(
       margin: EdgeInsets.only(top: 15, left: 15),

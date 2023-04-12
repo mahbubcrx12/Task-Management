@@ -39,7 +39,7 @@ class _AddTaskPageState extends State<AddTaskPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-     backgroundColor: darkHeaderClr,
+     backgroundColor: Get.isDarkMode?darkHeaderClr:white,
       appBar: _appBar(context),
 
       body: Container(
@@ -163,6 +163,7 @@ class _AddTaskPageState extends State<AddTaskPage> {
                   MyButton(label: "Create Task",
                     onTap: (){
                       _validateFields();
+
                   },),
 
               ],),
