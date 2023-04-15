@@ -1,7 +1,9 @@
 import 'package:date_picker_timeline/date_picker_timeline.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:task_management/controller/task_controller.dart';
+import 'package:task_management/model/task_model.dart';
 import 'package:task_management/service/notification_services.dart';
 import 'package:task_management/service/theme_services.dart';
 import 'package:get/get.dart';
@@ -9,6 +11,7 @@ import 'package:intl/intl.dart';
 import 'package:task_management/view/theme.dart';
 import 'package:task_management/view/widgets/MyButton.dart';
 import 'package:task_management/view/add_task_bar.dart';
+import 'package:task_management/view/widgets/task_tile.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -36,42 +39,124 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return SafeArea(
         child: Scaffold(
-          backgroundColor: Get.isDarkMode?darkHeaderClr:white,
+      backgroundColor: Get.isDarkMode ? darkHeaderClr : white,
       appBar: _appBar(),
       body: Column(
         children: [
           _titleBar(),
           _addDateBar(),
+          SizedBox(
+            height: 10,
+          ),
           _showTask(),
         ],
       ),
     ));
   }
 
-  _showTask(){
+  _showTask() {
+    return Expanded(child: Obx(() {
+      return ListView.builder(
+          shrinkWrap: true,
+          itemCount: _taskController.taskList.length,
+          itemBuilder: (_, index) {
+            return AnimationConfiguration.staggeredList(
+                position: index,
+                child: SlideAnimation(
+                    child: FadeInAnimation(
+                        child: Row(
+                  children: [
+                    GestureDetector(
+                      onTap: (){
+                        _showBottomSheet(context,_taskController.taskList[index]);
+                      },
+                      child: TaskTile(_taskController.taskList[index]),
+                    ),
 
-    return Expanded(
-
-        child: Obx(() {
-          return ListView.builder(
-
-            shrinkWrap: true,
-            itemCount: _taskController.taskList.length,
-              itemBuilder: (_,context){
-
-            return Container(
-              margin: EdgeInsets.only(bottom: 10),
-              width: 100,
-              height: 50,
-              color: Colors.red,
-            );
+                  ],
+                ))));
           });
-        })
-    );
-
+    }));
   }
 
-  _titleBar(){
+  _bottomSheetButton({
+    required String label,
+    required Function() onTap,
+    required Color clr,
+    bool isClose = false,
+    required BuildContext context,
+}){
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        margin: const EdgeInsets.symmetric(vertical: 4),
+        height: 55,
+        width: MediaQuery.of(context).size.width * .9,
+
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(20),
+          color: isClose== true?Colors.red : clr,
+        ),
+        child: Center(child: Text(label,style: isClose ?titleStyle: titleStyle.copyWith(color: Colors.white)
+        )
+        ),
+      ),
+    );
+}
+
+  _showBottomSheet(BuildContext context,TaskModel task){
+    Get.bottomSheet(
+      Container(
+        padding:  EdgeInsets.only(top: 4),
+        height: task.isCompleted == 1 ?
+        MediaQuery.of(context).size.height * 0.25 :
+        MediaQuery.of(context).size.height * 0.35 ,
+        color: Get.isDarkMode ? darkGreyClr:white,
+        child: Column(children: [
+          Container(
+            height: 6,
+            width: 120,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(12),
+              color: Get.isDarkMode ? Colors.grey[600] : Colors.grey[300]
+            ),
+
+          ),
+          Spacer(),
+          task.isCompleted == 1
+          ? Container()
+              : _bottomSheetButton(
+              label: "Task Completed",
+              onTap: (){
+                Get.back();
+              },
+              clr: primaryClr,
+            context :context
+          ),
+          SizedBox(height: 4,),
+          _bottomSheetButton(
+              label: "Delete Task",
+              onTap: (){
+                Get.back();
+              },
+              clr: Colors.red[200]!,
+              context :context
+          ),
+          SizedBox(height: 20,),
+          _bottomSheetButton(
+              label: "Close",
+              onTap: (){
+                Get.back();
+              },
+              clr: Colors.red[400]!,
+              context :context
+          )
+        ],),
+      )
+    );
+  }
+
+  _titleBar() {
     return Container(
       margin: const EdgeInsets.only(left: 20, right: 20, top: 10),
       child: Row(
@@ -95,19 +180,17 @@ class _HomePageState extends State<HomePage> {
             padding: const EdgeInsets.only(right: 0),
             child: MyButton(
               label: "+ Add Task",
-              onTap: (){
-                Get.to(()=>AddTaskPage());
-
+              onTap: () async {
+                await Get.to(() => AddTaskPage());
+                //_taskController.getTasks();
               },
-
             ),
-
           )
         ],
       ),
     );
   }
-  
+
   _addDateBar() {
     return Container(
       margin: EdgeInsets.only(top: 15, left: 15),

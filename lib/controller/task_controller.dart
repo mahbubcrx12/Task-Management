@@ -25,4 +25,9 @@ class TaskController extends GetxController{
     print(taskList);
   }
 
+  void delete(TaskModel task){
+     DBHelper.delete(task);
+
+  }
+
 }

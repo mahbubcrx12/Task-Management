@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:task_management/controller/task_controller.dart';
 import 'package:task_management/model/task_model.dart';
+import 'package:task_management/view/home.dart';
 import 'package:task_management/view/theme.dart';
 import 'package:task_management/view/widgets/MyButton.dart';
 import 'package:task_management/view/widgets/text_input_field.dart';
@@ -179,7 +180,7 @@ class _AddTaskPageState extends State<AddTaskPage> {
     if(_titleController.text.isNotEmpty && _noteController.text.isNotEmpty){
       //save data to database
       _addTaskToDatabase();
-      Get.back();
+      Get.to(()=>HomePage());
     }else if(_titleController.text.isEmpty || _noteController.text.isEmpty){
       Get.snackbar("Required", "Fields must be filled !",
         snackPosition: SnackPosition.BOTTOM,
