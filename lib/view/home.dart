@@ -60,21 +60,45 @@ class _HomePageState extends State<HomePage> {
           shrinkWrap: true,
           itemCount: _taskController.taskList.length,
           itemBuilder: (_, index) {
-            return AnimationConfiguration.staggeredList(
-                position: index,
-                child: SlideAnimation(
-                    child: FadeInAnimation(
-                        child: Row(
-                  children: [
-                    GestureDetector(
-                      onTap: (){
-                        _showBottomSheet(context,_taskController.taskList[index]);
-                      },
-                      child: TaskTile(_taskController.taskList[index]),
-                    ),
+            TaskModel task = _taskController.taskList[index];
+            print(task.toJson());
+            if(task.repeat == 'Daily'){
+              return AnimationConfiguration.staggeredList(
+                  position: index,
+                  child: SlideAnimation(
+                      child: FadeInAnimation(
+                          child: Row(
+                            children: [
+                              GestureDetector(
+                                onTap: () {
+                                  _showBottomSheet(
+                                      context, task);
+                                },
+                                child: TaskTile(task),
+                              ),
+                            ],
+                          ))));
+            }
+            if(task.date == DateFormat.yMd().format(_selectedDate)){
+              AnimationConfiguration.staggeredList(
+                  position: index,
+                  child: SlideAnimation(
+                      child: FadeInAnimation(
+                          child: Row(
+                            children: [
+                              GestureDetector(
+                                onTap: () {
+                                  _showBottomSheet(
+                                      context, task);
+                                },
+                                child: TaskTile(task),
+                              ),
+                            ],
+                          ))));
+            }else{
+              return Container();
+            }
 
-                  ],
-                ))));
           });
     }));
   }
@@ -85,75 +109,89 @@ class _HomePageState extends State<HomePage> {
     required Color clr,
     bool isClose = false,
     required BuildContext context,
-}){
+  }) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
         margin: const EdgeInsets.symmetric(vertical: 4),
         height: 55,
         width: MediaQuery.of(context).size.width * .9,
-
         decoration: BoxDecoration(
+          border: isClose == true?
+          Border.all(
+            width: 1,
+            color:  Get.isDarkMode ? Colors.white70 : Colors.grey[300]!
+          ):Border.all(
+              width: 0,
+              color:  Get.isDarkMode ? Colors.white70 : Colors.grey[300]!
+          ),
           borderRadius: BorderRadius.circular(20),
-          color: isClose== true?Colors.red : clr,
+          color: isClose == true ? Colors.transparent : clr,
         ),
-        child: Center(child: Text(label,style: isClose ?titleStyle: titleStyle.copyWith(color: Colors.white)
-        )
-        ),
+        child: Center(
+            child: Text(label,
+                style:Get.isDarkMode
+                    ? titleStyle
+                    : titleStyle.copyWith(color: Colors.black))),
       ),
     );
-}
+  }
 
-  _showBottomSheet(BuildContext context,TaskModel task){
-    Get.bottomSheet(
-      Container(
-        padding:  EdgeInsets.only(top: 4),
-        height: task.isCompleted == 1 ?
-        MediaQuery.of(context).size.height * 0.25 :
-        MediaQuery.of(context).size.height * 0.35 ,
-        color: Get.isDarkMode ? darkGreyClr:white,
-        child: Column(children: [
+  _showBottomSheet(BuildContext context, TaskModel task) {
+    Get.bottomSheet(Container(
+      padding: EdgeInsets.only(top: 4),
+      height: task.isCompleted == 1
+          ? MediaQuery.of(context).size.height * 0.25
+          : MediaQuery.of(context).size.height * 0.35,
+      color: Get.isDarkMode ? darkGreyClr : white,
+      child: Column(
+        children: [
           Container(
             height: 6,
             width: 120,
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(12),
-              color: Get.isDarkMode ? Colors.grey[600] : Colors.grey[300]
-            ),
-
+                borderRadius: BorderRadius.circular(12),
+                color: Get.isDarkMode ? Colors.grey[600] : Colors.grey[300]),
           ),
           Spacer(),
           task.isCompleted == 1
-          ? Container()
+              ? Container()
               : _bottomSheetButton(
-              label: "Task Completed",
-              onTap: (){
-                Get.back();
-              },
-              clr: primaryClr,
-            context :context
+                  label: "Task Completed",
+                  onTap: () {
+                    _taskController.markTaskCompleted(task.id!);
+
+                    _taskController.getTasks();
+                    Get.back();
+                  },
+                  clr: primaryClr,
+                  context: context),
+          SizedBox(
+            height: 4,
           ),
-          SizedBox(height: 4,),
           _bottomSheetButton(
               label: "Delete Task",
-              onTap: (){
+              onTap: () {
+                TaskController().delete(task);
+                _taskController.getTasks();
                 Get.back();
               },
               clr: Colors.red[200]!,
-              context :context
+              context: context),
+          SizedBox(
+            height: 20,
           ),
-          SizedBox(height: 20,),
           _bottomSheetButton(
+            isClose: true,
               label: "Close",
-              onTap: (){
+              onTap: () {
                 Get.back();
               },
-              clr: Colors.red[400]!,
-              context :context
-          )
-        ],),
-      )
-    );
+              clr: Colors.transparent,
+              context: context)
+        ],
+      ),
+    ));
   }
 
   _titleBar() {
@@ -212,7 +250,9 @@ class _HomePageState extends State<HomePage> {
               fontSize: 14, fontWeight: FontWeight.bold, color: Colors.grey),
         ),
         onDateChange: (date) {
-          _selectedDate = date;
+          setState(() {
+            _selectedDate = date;
+          });
         },
       ),
     );
@@ -243,10 +283,7 @@ class _HomePageState extends State<HomePage> {
           backgroundColor: Colors.white,
           radius: 16,
           backgroundImage: AssetImage("assets/personicon.png"),
-          // child: Padding(
-          //   padding: const EdgeInsets.all(0.0),
-          //   child: Image.asset('assets/personicon.png'),
-          // ),
+
         ),
         SizedBox(
           width: 20,

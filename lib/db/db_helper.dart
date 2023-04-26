@@ -1,5 +1,3 @@
-
-
 import 'package:sqflite/sqflite.dart';
 import 'package:task_management/model/task_model.dart';
 
@@ -46,6 +44,14 @@ class DBHelper{
 
   static delete(TaskModel task)async{
       return await _db!.delete(_tableName,where: 'id=?',whereArgs: [task.id]);
+  }
+
+  static update(int id)async{
+    return await _db!.rawUpdate('''
+    UPDATE tasks
+    SET isCompleted = ?
+    WHERE id = ?
+    ''',[1,id]);
   }
 
 }
